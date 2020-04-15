@@ -28,9 +28,9 @@ def populate():
         {'title': 'Flask',
          'url': 'http://flask.pocoo.org'}]
 
-    cats = {'Python': {'pages': python_pages},
-            'Django': {'pages': django_pages},
-            'Other Frameworks': {'pages': other_pages}}
+    cats = {'Python': {'pages': python_pages, 'views': 0, 'likes': 0},
+            'Django': {'pages': django_pages,  'views': 0, 'likes': 0},
+            'Other Frameworks': {'pages': other_pages,  'views': 0, 'likes': 0}}
 
     # goes through the cats dictionary
     # adds each category
@@ -39,24 +39,29 @@ def populate():
     for cat, cat_data in cats.items():
         c = add_cat(cat)
         for p in cat_data['pages']:
-            add_page(c, p['title'], p['url'])
+            add_page(c, p['title'], p['url'], p['category'])
 
     # print out the categories added
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
             print(f'- {c}: {p}')
 
+
 def add_page(cat, title, url, views=0):
         p = Page.objects.get_or_create(category=cat, title=title)[0]
-        p.url=url
-        p.views=views
+        p.url = url
+        p.views = views
         p.save()
         return p
 
-def add_cat(name):
+
+def add_cat(name, views=0, likes=0):
         c = Category.objects.get_or_create(name=name)[0]
+        c.views = views
+        c.likes = likes
         c.save()
         return c
+
 
 if __name__ == '__main__':
     print('Starting Rango population script...')
